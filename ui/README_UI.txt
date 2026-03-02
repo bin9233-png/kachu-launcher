@@ -1,0 +1,1 @@
+Place your launcher frontend files here (React/Vite etc).
