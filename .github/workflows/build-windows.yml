@@ -21,7 +21,10 @@ jobs:
         with:
           toolchain: 1.79.0
 
+      # Windows runners use PowerShell by default.
+      # This step uses CMD syntax, so we force shell: cmd.
       - name: Frontend install + build
+        shell: cmd
         working-directory: ui
         run: |
           if exist package-lock.json (
