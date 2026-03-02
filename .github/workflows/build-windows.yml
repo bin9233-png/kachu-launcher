@@ -1,0 +1,46 @@
+name: Build Windows (Kachu Launcher)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Rust 1.79
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.79.0
+
+      - name: Frontend install + build
+        working-directory: ui
+        run: |
+          if exist package-lock.json (
+            npm ci
+          ) else (
+            npm install
+          )
+          npm run build
+
+      - name: Install tauri-cli (v1.6.0)
+        run: cargo install tauri-cli --version 1.6.0 --locked --force
+
+      - name: Build Tauri (Windows)
+        run: cargo tauri build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: KachuLauncher-Windows
+          path: |
+            src-tauri/target/release/bundle/**
+            src-tauri/target/release/*.exe
